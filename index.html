@@ -603,41 +603,40 @@ function gerarPDF(){
   y=28;
 
   // contrato
-  sf(6.5,'bold',CA); doc.text('CONTRATO',M,y+4);
-  sf(8,'normal',CK); doc.text(clean(v('contrato'))+' - '+clean(v('bairro_cidade'))+', '+clean(v('endereco')),M+24,y+4,{maxWidth:W-M-24});
+  var C1=M, C2=M+22, C3=105, C4=125; // label col1, value col1, label col2, value col2
+  sf(6.5,'bold',CA); doc.text('CONTRATO',C1,y+4);
+  sf(8,'normal',CK); doc.text(clean(v('contrato'))+' - '+clean(v('bairro_cidade'))+', '+clean(v('endereco')),C1+24,y+4,{maxWidth:W-M-24});
   y+=9;
-  sf(6.5,'bold',CG); doc.text('Inicio',M,y+4); sf(8,'normal',CK); doc.text(fmtDate(v('inicio')),M+12,y+4);
-  sf(6.5,'bold',CG); doc.text('Termino',75,y+4); sf(8,'normal',CK); doc.text(fmtDate(v('termino')),87,y+4);
-  sf(6.5,'bold',CG); doc.text('Reajuste',132,y+4); sf(8,'normal',CK); doc.text(clean(v('reajuste')),146,y+4);
-  y+=8;
-  sf(6.5,'bold',CG); doc.text('Locador',M,y+4); sf(8,'normal',CK); doc.text(clean(v('locador_nome')),M+18,y+4);
-  sf(6.5,'bold',CG); doc.text('CNPJ',100,y+4); sf(8,'normal',CK); doc.text(clean(v('locador_cnpj')),111,y+4);
+  sf(6.5,'bold',CG); doc.text('Inicio',  C1,y+4); sf(8,'normal',CK); doc.text(fmtDate(v('inicio')),  C1+14,y+4);
+  sf(6.5,'bold',CG); doc.text('Termino', 72, y+4); sf(8,'normal',CK); doc.text(fmtDate(v('termino')), 84,  y+4);
+  sf(6.5,'bold',CG); doc.text('Reajuste',130,y+4); sf(8,'normal',CK); doc.text(clean(v('reajuste')),  144, y+4);
+  y+=7;
+  sf(6.5,'bold',CG); doc.text('Locador', C1,y+4); sf(8,'normal',CK); doc.text(clean(v('locador_nome')), C1+16, y+4, {maxWidth:72});
+  sf(6.5,'bold',CG); doc.text('CNPJ',    C3,y+4); sf(8,'normal',CK); doc.text(clean(v('locador_cnpj')), C4,    y+4);
   y+=6;
-  // locatario
   if(v('locatario_nome')){
-    sf(6.5,'bold',CG); doc.text('Locatario',M,y+4); sf(8,'normal',CK); doc.text(clean(v('locatario_nome')),M+20,y+4);
-    if(v('locatario_cpf')){ sf(6.5,'bold',CG); doc.text('CPF/CNPJ',100,y+4); sf(8,'normal',CK); doc.text(clean(v('locatario_cpf')),118,y+4); }
+    sf(6.5,'bold',CG); doc.text('Locatario',C1,y+4); sf(8,'normal',CK); doc.text(clean(v('locatario_nome')),C1+19,y+4,{maxWidth:72});
+    if(v('locatario_cpf')){ sf(6.5,'bold',CG); doc.text('CPF/CNPJ',C3,y+4); sf(8,'normal',CK); doc.text(clean(v('locatario_cpf')),C4,y+4); }
     y+=6;
   }
-  y+=4; hl(y,[210,222,232],0.4); y+=5;
+  y+=3; hl(y,[210,222,232],0.4); y+=5;
 
   // cobrança
-  sf(6.5,'bold',CA); doc.text('COBRANCA',M,y); y+=5;
-  sf(6.5,'bold',CG); doc.text('Referencia',M,y+3);
+  sf(6.5,'bold',CA); doc.text('COBRANCA',C1,y); y+=5;
   var refMes=v('ref_mes'); var refLabel=refMes?refMes.split('-')[1]+'/'+refMes.split('-')[0]:'';
-  sf(8,'normal',CK); doc.text(refLabel,M+22,y+3);
-  sf(6.5,'bold',CG); doc.text('Periodo',85,y+3); sf(8,'normal',CK); doc.text(clean(v('periodo_aluguel')),99,y+3,{maxWidth:80});
+  sf(6.5,'bold',CG); doc.text('Referencia', C1,y+3); sf(8,'normal',CK); doc.text(refLabel,             C1+20,y+3);
+  sf(6.5,'bold',CG); doc.text('Periodo',    72, y+3); sf(8,'normal',CK); doc.text(clean(v('periodo_aluguel')),84,y+3,{maxWidth:95});
   y+=9; hl(y,[210,222,232],0.4); y+=5;
 
   // repasse
-  sf(6.5,'bold',CA); doc.text('REPASSE',M,y); y+=5;
-  sf(6.5,'bold',CG); doc.text('Forma pagto',M,y+3); sf(8,'normal',CK); doc.text(clean(v('forma_pagto'))+'  '+clean(v('banco'))+'  '+clean(v('agencia_conta')),M+24,y+3);
+  sf(6.5,'bold',CA); doc.text('REPASSE',C1,y); y+=5;
+  sf(6.5,'bold',CG); doc.text('Forma pagto',C1,y+3); sf(8,'normal',CK); doc.text(clean(v('forma_pagto'))+'  '+clean(v('banco'))+'  '+clean(v('agencia_conta')),C1+22,y+3);
   y+=5;
-  sf(6.5,'bold',CG); doc.text('Nominal',M,y+3); sf(8,'bold',CK); doc.text(clean(v('nominal')),M+17,y+3);
-  sf(6.5,'bold',CG); doc.text('CNPJ',118,y+3); sf(8,'normal',CK); doc.text(clean(v('locador_cnpj')),127,y+3);
+  sf(6.5,'bold',CG); doc.text('Nominal',  C1,y+3); sf(8,'bold',CK);   doc.text(clean(v('nominal')),     C1+15,y+3,{maxWidth:72});
+  sf(6.5,'bold',CG); doc.text('CNPJ',     C3,y+3); sf(8,'normal',CK); doc.text(clean(v('locador_cnpj')),C4,   y+3);
   y+=5;
-  sf(6.5,'bold',CG); doc.text('Vencimento',M,y+3); sf(8,'normal',CK); doc.text(fmtDate(v('vencimento')),M+24,y+3);
-  sf(6.5,'bold',CG); doc.text('Pagamento',85,y+3); sf(8,'normal',CK); doc.text(fmtDate(v('data_pagamento')),107,y+3);
+  sf(6.5,'bold',CG); doc.text('Vencimento',C1,y+3); sf(8,'normal',CK); doc.text(fmtDate(v('vencimento')),   C1+22,y+3);
+  sf(6.5,'bold',CG); doc.text('Pagamento', 72, y+3); sf(8,'normal',CK); doc.text(fmtDate(v('data_pagamento')),84,y+3);
   y+=10; hl(y,[210,222,232],0.4); y+=6;
 
   // tabela

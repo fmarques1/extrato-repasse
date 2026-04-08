@@ -529,6 +529,7 @@ function makeRow(data){
   var tdX=document.createElement('td'); tdX.style.textAlign='center';
   var btnX=document.createElement('button'); btnX.className='btn-remove-row'; btnX.title='Remover'; btnX.innerHTML='&times;';
   btnX.addEventListener('click',function(){ tr.remove(); recalc(); }); tdX.appendChild(btnX); tr.appendChild(tdX);
+  tr._inN=inN; tr._inD=inD; tr._inV=inV; tr._sel=sel; tr._cb=cb;
   return {tr,cb,sel,inV,inN,inD};
 }
 
@@ -557,11 +558,13 @@ DEFAULTS.forEach(function(r){ addRow(r); });
 function getRows(){
   var out=[];
   g('itens-tbody').querySelectorAll('tr').forEach(function(tr){
-    var cb=tr.querySelector('input[type=checkbox]'); if(!cb||!cb.checked) return;
-    var tx=tr.querySelectorAll('input[type=text]');
-    var num=tr.querySelector('input[type=number]');
-    var sel=tr.querySelector('select');
-    out.push({nome:tx[0]?tx[0].value.trim():'',desc:tx[1]?tx[1].value.trim():'',tipo:sel?sel.value:'credito',valor:parseFloat(num?num.value:0)||0});
+    if(!tr._cb||!tr._cb.checked) return;
+    out.push({
+      nome:  tr._inN ? tr._inN.value.trim() : '',
+      desc:  tr._inD ? tr._inD.value.trim() : '',
+      tipo:  tr._sel ? tr._sel.value : 'credito',
+      valor: parseFloat(tr._inV ? tr._inV.value : 0) || 0,
+    });
   });
   return out;
 }

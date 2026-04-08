@@ -636,7 +636,7 @@ function gerarPDF(){
   sf(6.5,'bold',CG); doc.text('CNPJ',     C3,y+3); sf(8,'normal',CK); doc.text(clean(v('locador_cnpj')),C4,   y+3);
   y+=5;
   sf(6.5,'bold',CG); doc.text('Vencimento',C1,y+3); sf(8,'normal',CK); doc.text(fmtDate(v('vencimento')),   C1+22,y+3);
-  sf(6.5,'bold',CG); doc.text('Pagamento', 72, y+3); sf(8,'normal',CK); doc.text(fmtDate(v('data_pagamento')),84,y+3);
+  sf(6.5,'bold',CG); doc.text('Pagamento', 105,y+3); sf(8,'normal',CK); doc.text(fmtDate(v('data_pagamento')),120,y+3);
   y+=10; hl(y,[210,222,232],0.4); y+=6;
 
   // tabela

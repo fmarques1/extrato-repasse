@@ -576,40 +576,59 @@ function gerarPDF(){
   function sf(sz,st,co){ doc.setFontSize(sz); doc.setFont('helvetica',st||'normal'); doc.setTextColor.apply(doc,co||CK); }
   function hl(yy,co,lw){ doc.setDrawColor.apply(doc,co||[210,220,230]); doc.setLineWidth(lw||0.25); doc.line(M,yy,W-M,yy); }
   function fr(x,yy,w,h,co){ doc.setFillColor.apply(doc,co); doc.rect(x,yy,w,h,'F'); }
+  function clean(s){
+    return (s||'')
+      .replace(/[\u00e0\u00e1\u00e2\u00e3\u00e4]/g,'a')
+      .replace(/[\u00e8\u00e9\u00ea\u00eb]/g,'e')
+      .replace(/[\u00ec\u00ed\u00ee\u00ef]/g,'i')
+      .replace(/[\u00f2\u00f3\u00f4\u00f5\u00f6]/g,'o')
+      .replace(/[\u00f9\u00fa\u00fb\u00fc]/g,'u')
+      .replace(/[\u00c0\u00c1\u00c2\u00c3\u00c4]/g,'A')
+      .replace(/[\u00c8\u00c9\u00ca\u00cb]/g,'E')
+      .replace(/[\u00cc\u00cd\u00ce\u00cf]/g,'I')
+      .replace(/[\u00d2\u00d3\u00d4\u00d5\u00d6]/g,'O')
+      .replace(/[\u00d9\u00da\u00db\u00dc]/g,'U')
+      .replace(/\u00e7/g,'c').replace(/\u00c7/g,'C')
+      .replace(/\u00f1/g,'n').replace(/\u00d1/g,'N')
+      .replace(/[\u2013\u2014]/g,'-')
+      .replace(/[\u2018\u2019]/g,"'")
+      .replace(/[\u201c\u201d]/g,'"')
+      .replace(/[^\x00-\x7F]/g,'');
+  }
 
   // header
   fr(0,0,W,24,CB); fr(0,0,4,24,CA);
   sf(9,'bold',CW); doc.text('D&S',M,11);
-  sf(14,'bold',CW); doc.text('Extrato de '+v('locador_nome'),M+10,11);
-  sf(8,'normal',[175,200,222]); doc.text('Posição em '+fmtDate(v('emissao'))+';',M+10,17);
+  sf(14,'bold',CW); doc.text('Extrato de '+clean(v('locador_nome')),M+10,11);
+  sf(8,'normal',[175,200,222]); doc.text('Posicao em '+fmtDate(v('emissao'))+';',M+10,17);
   sf(7,'normal',[155,185,212]); doc.text('Emitido em '+fmtDate(v('emissao')),W-M,7,{align:'right'});
   y=28;
 
   // contrato
   sf(6.5,'bold',CA); doc.text('CONTRATO',M,y+4);
-  sf(8,'normal',CK); doc.text(v('contrato')+' — '+v('bairro_cidade')+', '+v('endereco'),M+24,y+4,{maxWidth:W-M-24});
+  sf(8,'normal',CK); doc.text(clean(v('contrato'))+' - '+clean(v('bairro_cidade'))+', '+clean(v('endereco')),M+24,y+4,{maxWidth:W-M-24});
   y+=9;
-  sf(6.5,'bold',CG); doc.text('Início',M,y+4); sf(8,'normal',CK); doc.text(fmtDate(v('inicio')),M+12,y+4);
-  sf(6.5,'bold',CG); doc.text('Término',75,y+4); sf(8,'normal',CK); doc.text(fmtDate(v('termino')),87,y+4);
-  sf(6.5,'bold',CG); doc.text('Reajuste',132,y+4); sf(8,'normal',CK); doc.text(v('reajuste'),146,y+4);
+  sf(6.5,'bold',CG); doc.text('Inicio',M,y+4); sf(8,'normal',CK); doc.text(fmtDate(v('inicio')),M+12,y+4);
+  sf(6.5,'bold',CG); doc.text('Termino',75,y+4); sf(8,'normal',CK); doc.text(fmtDate(v('termino')),87,y+4);
+  sf(6.5,'bold',CG); doc.text('Reajuste',132,y+4); sf(8,'normal',CK); doc.text(clean(v('reajuste')),146,y+4);
   y+=8;
-  sf(6.5,'bold',CG); doc.text('Locador',M,y+4); sf(8,'normal',CK); doc.text(v('locador_nome'),M+18,y+4);
-  sf(6.5,'bold',CG); doc.text('CNPJ',100,y+4); sf(8,'normal',CK); doc.text(v('locador_cnpj'),111,y+4);
-  sf(6.5,'bold',CG); doc.text('Email',150,y+4); sf(8,'normal',CK); doc.text(v('locador_email'),161,y+4,{maxWidth:W-M-161});
+  sf(6.5,'bold',CG); doc.text('Locador',M,y+4); sf(8,'normal',CK); doc.text(clean(v('locador_nome')),M+18,y+4);
+  sf(6.5,'bold',CG); doc.text('CNPJ',100,y+4); sf(8,'normal',CK); doc.text(clean(v('locador_cnpj')),111,y+4);
+  sf(6.5,'bold',CG); doc.text('Email',150,y+4); sf(8,'normal',CK); doc.text(clean(v('locador_email')),161,y+4,{maxWidth:W-M-161});
   y+=10; hl(y,[210,222,232],0.4); y+=5;
 
   // cobrança
-  sf(6.5,'bold',CA); doc.text('COBRANÇA',M,y); y+=5;
-  sf(6.5,'bold',CG); doc.text('Referência',M,y+3); sf(8,'normal',CK); doc.text(fmtDate(v('ref_cobranca')),M+22,y+3);
+  sf(6.5,'bold',CA); doc.text('COBRANCA',M,y); y+=5;
+  sf(6.5,'bold',CG); doc.text('Referencia',M,y+3); sf(8,'normal',CK); doc.text(fmtDate(v('ref_cobranca')),M+22,y+3);
   sf(6.5,'bold',CG); doc.text('Pagamento',85,y+3); sf(8,'normal',CK); doc.text(fmtDate(v('pag_cobranca')),107,y+3);
   y+=9; hl(y,[210,222,232],0.4); y+=5;
 
   // repasse
   sf(6.5,'bold',CA); doc.text('REPASSE',M,y); y+=5;
-  sf(6.5,'bold',CG); doc.text('Forma pagto',M,y+3); sf(8,'normal',CK); doc.text(v('forma_pagto')+'  '+v('banco')+'  '+v('agencia_conta'),M+24,y+3);
+  sf(6.5,'bold',CG); doc.text('Forma pagto',M,y+3); sf(8,'normal',CK); doc.text(clean(v('forma_pagto'))+'  '+clean(v('banco'))+'  '+clean(v('agencia_conta')),M+24,y+3);
   y+=5;
-  sf(6.5,'bold',CG); doc.text('Nominal',M,y+3); sf(8,'bold',CK); doc.text(v('nominal'),M+17,y+3);
-  sf(6.5,'bold',CG); doc.text('CNPJ',118,y+3); sf(8,'normal',CK); doc.text(v('locador_cnpj'),127,y+3);
+  sf(6.5,'bold',CG); doc.text('Nominal',M,y+3); sf(8,'bold',CK); doc.text(clean(v('nominal')),M+17,y+3);
+  sf(6.5,'bold',CG); doc.text('CNPJ',118,y+3); sf(8,'normal',CK); doc.text(clean(v('locador_cnpj')),127,y+3);
   y+=5;
   sf(6.5,'bold',CG); doc.text('Vencimento',M,y+3); sf(8,'normal',CK); doc.text(fmtDate(v('vencimento')),M+24,y+3);
   sf(6.5,'bold',CG); doc.text('Pagamento',85,y+3); sf(8,'normal',CK); doc.text(fmtDate(v('data_pagamento')),107,y+3);
@@ -617,7 +636,7 @@ function gerarPDF(){
 
   // tabela
   fr(M,y,W-M*2,7,CB);
-  sf(6,'bold',[175,200,225]); doc.text('DESCRIÇÃO DO REPASSE',M+3,y+4.5); doc.text('VALOR',W-M-3,y+4.5,{align:'right'});
+  sf(6,'bold',[175,200,225]); doc.text('DESCRICAO DO REPASSE',M+3,y+4.5); doc.text('VALOR',W-M-3,y+4.5,{align:'right'});
   y+=7;
 
   var rows=getRows(), total=0;
@@ -626,11 +645,11 @@ function gerarPDF(){
     total+=deb?-r.valor:r.valor;
     var rh=r.desc?10:7;
     if(i%2===0) fr(M,y,W-M*2,rh,[246,250,254]);
-    var lbl=r.nome;
-    if(r.nome.toLowerCase().indexOf('aluguel')>=0&&v('periodo_aluguel')) lbl=r.nome+' — '+v('periodo_aluguel');
+    var lbl=clean(r.nome);
+    if(r.nome.toLowerCase().indexOf('aluguel')>=0&&v('periodo_aluguel')) lbl=clean(r.nome)+' - '+clean(v('periodo_aluguel'));
     sf(8,'normal',deb?CR:CK); doc.text(lbl,M+3,y+5,{maxWidth:120});
-    if(r.desc){ sf(6.5,'normal',CG); doc.text(r.desc,M+3,y+8.5); }
-    sf(8,deb?'bold':'normal',deb?CR:CK); doc.text((deb?'−':'')+fmt(r.valor),W-M-3,y+5,{align:'right'});
+    if(r.desc){ sf(6.5,'normal',CG); doc.text(clean(r.desc),M+3,y+8.5); }
+    sf(8,deb?'bold':'normal',deb?CR:CK); doc.text((deb?'-':'')+fmt(r.valor),W-M-3,y+5,{align:'right'});
     y+=rh;
   });
 
@@ -640,11 +659,11 @@ function gerarPDF(){
 
   // footer
   y+=14; hl(y,CG,0.35); y+=6;
-  sf(8,'bold',CK); doc.text(v('locador_nome'),M,y);
-  sf(8,'normal',CG); doc.text('CNPJ: '+v('locador_cnpj'),W/2+5,y);
+  sf(8,'bold',CK); doc.text(clean(v('locador_nome')),M,y);
+  sf(8,'normal',CG); doc.text('CNPJ: '+clean(v('locador_cnpj')),W/2+5,y);
   y+=7;
-  sf(7,'bold',CG); doc.text(v('imob_nome'),M,y);
-  sf(7,'normal',CG); doc.text(v('imob_endereco'),M,y+4); doc.text(v('imob_cidade'),M,y+8);
+  sf(7,'bold',CG); doc.text(clean(v('imob_nome')),M,y);
+  sf(7,'normal',CG); doc.text(clean(v('imob_endereco')),M,y+4); doc.text(clean(v('imob_cidade')),M,y+8);
   sf(7,'normal',CG); doc.text('1 de 1',W-M,H-10,{align:'right'});
 
   doc.save('extrato_repasse_'+v('contrato').replace(/[^a-zA-Z0-9]/g,'_')+'_'+new Date().toISOString().split('T')[0]+'.pdf');

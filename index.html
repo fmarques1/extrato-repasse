@@ -382,7 +382,16 @@ body {
       <div class="form-grid cols-2">
         <div class="field col-full"><label>Razão Social</label><input type="text" id="locador_nome" value="Dantas & Silva Gestão Patrimonial LTDA"></div>
         <div class="field"><label>CNPJ / CPF</label><input type="text" id="locador_cnpj" value="37.484.335/0001-32"></div>
-        <div class="field"><label>E-mail</label><input type="text" id="locador_email" value="fernanda@dspatrimonial.co"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="card-step" style="background:#4a7fa0;">L</div><h2>Locatário / Inquilino</h2></div>
+    <div class="card-body">
+      <div class="form-grid cols-2">
+        <div class="field col-full"><label>Nome / Razão Social</label><input type="text" id="locatario_nome" placeholder="Nome completo do inquilino"></div>
+        <div class="field"><label>CPF / CNPJ</label><input type="text" id="locatario_cpf" placeholder="000.000.000-00"></div>
       </div>
     </div>
   </div>
@@ -392,10 +401,9 @@ body {
   <div class="card">
     <div class="card-header"><div class="card-step">3</div><h2>Período de Referência</h2></div>
     <div class="card-body">
-      <div class="form-grid cols-3">
-        <div class="field"><label>Referência (cobrança)</label><input type="date" id="ref_cobranca"></div>
-        <div class="field"><label>Pagamento (cobrança)</label><input type="date" id="pag_cobranca"></div>
-        <div class="field"><label>Período do Aluguel</label><input type="text" id="periodo_aluguel" placeholder="01/06 até 30/06/2025"></div>
+      <div class="form-grid cols-2">
+        <div class="field"><label>Mês de Referência</label><input type="month" id="ref_mes"></div>
+        <div class="field"><label>Período do Aluguel</label><input type="text" id="periodo_aluguel" placeholder="01/04/2026 até 30/04/2026"></div>
       </div>
     </div>
   </div>
@@ -450,19 +458,6 @@ body {
     </button>
   </div>
 
-  <!-- 6 -->
-  <p class="section-label">Rodapé do Documento</p>
-  <div class="card">
-    <div class="card-header"><div class="card-step">6</div><h2>Dados da Imobiliária</h2></div>
-    <div class="card-body">
-      <div class="form-grid cols-2">
-        <div class="field"><label>Nome da Imobiliária</label><input type="text" id="imob_nome" value="Casari Imóveis"></div>
-        <div class="field"><label>Endereço</label><input type="text" id="imob_endereco" value="Avenida Kennedy 159 Jardim do Mar"></div>
-        <div class="field"><label>Cidade / UF / CEP</label><input type="text" id="imob_cidade" value="São Bernardo do Campo / SP - 09726-260"></div>
-      </div>
-    </div>
-  </div>
-
   <button class="btn-generate" onclick="gerarPDF()">
     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
     Gerar e Baixar PDF
@@ -480,11 +475,11 @@ function v(id){ var el=g(id); return el?el.value.trim():''; }
   var today=new Date(), iso=today.toISOString().split('T')[0];
   g('emissao').value=iso; g('data_pagamento').value=iso;
   g('vencimento').value=new Date(today.getFullYear(),today.getMonth()+1,2).toISOString().split('T')[0];
-  g('ref_cobranca').value=iso; g('pag_cobranca').value=iso;
+  g('ref_mes').value=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0');
   var prev=new Date(today.getFullYear(),today.getMonth(),1);
   var pM=prev.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
   var last=new Date(today.getFullYear(),today.getMonth()+1,0).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
-  g('periodo_aluguel').value=pM+' até '+last;
+  g('periodo_aluguel').value=pM+' ate '+last;
 })();
 
 var DEFAULTS=[
@@ -617,13 +612,21 @@ function gerarPDF(){
   y+=8;
   sf(6.5,'bold',CG); doc.text('Locador',M,y+4); sf(8,'normal',CK); doc.text(clean(v('locador_nome')),M+18,y+4);
   sf(6.5,'bold',CG); doc.text('CNPJ',100,y+4); sf(8,'normal',CK); doc.text(clean(v('locador_cnpj')),111,y+4);
-  sf(6.5,'bold',CG); doc.text('Email',150,y+4); sf(8,'normal',CK); doc.text(clean(v('locador_email')),161,y+4,{maxWidth:W-M-161});
-  y+=10; hl(y,[210,222,232],0.4); y+=5;
+  y+=6;
+  // locatario
+  if(v('locatario_nome')){
+    sf(6.5,'bold',CG); doc.text('Locatario',M,y+4); sf(8,'normal',CK); doc.text(clean(v('locatario_nome')),M+20,y+4);
+    if(v('locatario_cpf')){ sf(6.5,'bold',CG); doc.text('CPF/CNPJ',100,y+4); sf(8,'normal',CK); doc.text(clean(v('locatario_cpf')),118,y+4); }
+    y+=6;
+  }
+  y+=4; hl(y,[210,222,232],0.4); y+=5;
 
   // cobrança
   sf(6.5,'bold',CA); doc.text('COBRANCA',M,y); y+=5;
-  sf(6.5,'bold',CG); doc.text('Referencia',M,y+3); sf(8,'normal',CK); doc.text(fmtDate(v('ref_cobranca')),M+22,y+3);
-  sf(6.5,'bold',CG); doc.text('Pagamento',85,y+3); sf(8,'normal',CK); doc.text(fmtDate(v('pag_cobranca')),107,y+3);
+  sf(6.5,'bold',CG); doc.text('Referencia',M,y+3);
+  var refMes=v('ref_mes'); var refLabel=refMes?refMes.split('-')[1]+'/'+refMes.split('-')[0]:'';
+  sf(8,'normal',CK); doc.text(refLabel,M+22,y+3);
+  sf(6.5,'bold',CG); doc.text('Periodo',85,y+3); sf(8,'normal',CK); doc.text(clean(v('periodo_aluguel')),99,y+3,{maxWidth:80});
   y+=9; hl(y,[210,222,232],0.4); y+=5;
 
   // repasse
@@ -646,14 +649,13 @@ function gerarPDF(){
   rows.forEach(function(r,i){
     var deb=r.tipo==='debito';
     total+=deb?-r.valor:r.valor;
-    var rh=r.desc?10:7;
-    if(i%2===0) fr(M,y,W-M*2,rh,[246,250,254]);
+    if(i%2===0) fr(M,y,W-M*2,7,[246,250,254]);
     var lbl=clean(r.nome);
     if(r.nome.toLowerCase().indexOf('aluguel')>=0&&v('periodo_aluguel')) lbl=clean(r.nome)+' - '+clean(v('periodo_aluguel'));
-    sf(8,'normal',deb?CR:CK); doc.text(lbl,M+3,y+5,{maxWidth:120});
-    if(r.desc){ sf(6.5,'normal',CG); doc.text(clean(r.desc),M+3,y+8.5); }
+    if(r.desc) lbl=lbl+' ('+clean(r.desc)+')';
+    sf(8,'normal',deb?CR:CK); doc.text(lbl,M+3,y+5,{maxWidth:130});
     sf(8,deb?'bold':'normal',deb?CR:CK); doc.text((deb?'-':'')+fmt(r.valor),W-M-3,y+5,{align:'right'});
-    y+=rh;
+    y+=7;
   });
 
   fr(M,y,W-M*2,10,CB);
@@ -664,9 +666,6 @@ function gerarPDF(){
   y+=14; hl(y,CG,0.35); y+=6;
   sf(8,'bold',CK); doc.text(clean(v('locador_nome')),M,y);
   sf(8,'normal',CG); doc.text('CNPJ: '+clean(v('locador_cnpj')),W/2+5,y);
-  y+=7;
-  sf(7,'bold',CG); doc.text(clean(v('imob_nome')),M,y);
-  sf(7,'normal',CG); doc.text(clean(v('imob_endereco')),M,y+4); doc.text(clean(v('imob_cidade')),M,y+8);
   sf(7,'normal',CG); doc.text('1 de 1',W-M,H-10,{align:'right'});
 
   doc.save('extrato_repasse_'+v('contrato').replace(/[^a-zA-Z0-9]/g,'_')+'_'+new Date().toISOString().split('T')[0]+'.pdf');
